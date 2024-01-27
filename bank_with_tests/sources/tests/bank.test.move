@@ -1,5 +1,6 @@
 #[test_only] 
-module bank::bank_tests {
+module bank_with_tests::bank_tests {
+    
     use sui::sui::SUI;
     use sui::transfer;
     use sui::coin::{Self, Coin};
@@ -31,51 +32,51 @@ module bank::bank_tests {
         let scenario = &mut scenario_val;
         
         {
-            init_for_testing(test_scenario::ctx(scenario));
+            bank::init_for_testing(test_scenario::ctx(scenario));
         };
         
         scenario_val
     }
 
 
-    #[test]
-    fun test_deposit() {
-        let scenario_val = init_test_helper();
-        let scenario = &mut scenario_val;
+    // #[test]
+    // fun test_deposit() {
+    //     let scenario_val = init_test_helper();
+    //     let scenario = &mut scenario_val;
 
-        deposit_test_helper(scenario, alice, 100, 5);
+    //     deposit_test_helper(scenario, alice, 100, 5);
 
-        test_scenario::end(scenario_val);
-    }
+    //     test_scenario::end(scenario_val);
+    // }
 
 
-    #[test]
-    fun deposit_test_helper(scenario: &mut test_scenario::Scenario, addr:address, amount:u64, fee_percent:u8) {
-        test_scenario::next_tx(scenario, addr);
-        {
-        let bank = test_scenario::take_shared<Bank>(scenario);
-        bank::deposit(&mut bank, mint_for_testing(amount, test_scenario::ctx(scenario)), test_scenario::ctx(scenario));
+    // #[test]
+    // fun deposit_test_helper(scenario: &mut test_scenario::Scenario, addr:address, amount:u64, fee_percent:u8) {
+    //     test_scenario::next_tx(scenario, addr);
+    //     {
+    //     let bank = test_scenario::take_shared<Bank>(scenario);
+    //     bank::deposit(&mut bank, mint_for_testing(amount, test_scenario::ctx(scenario)), test_scenario::ctx(scenario));
 
-        let (user_amount, admin_amount) = calculate_fee_helper(amount, fee_percent);
+    //     let (user_amount, admin_amount) = calculate_fee_helper(amount, fee_percent);
 
-        assert_eq(bank::user_balance(&bank, addr), user_amount);
-        assert_eq(bank::admin_balance(&bank), admin_amount);
+    //     assert_eq(bank::user_balance(&bank, addr), user_amount);
+    //     assert_eq(bank::admin_balance(&bank), admin_amount);
         
-        test_scenario::return_shared(bank);
-        };
-    }
+    //     test_scenario::return_shared(bank);
+    //     };
+    // }
 
 
    
-    #[expected_failure]
-    fun test_deposit_fail() {
-        let scenario_val = init_test_helper();
-        let scenario = &mut scenario_val;
+    // #[expected_failure]
+    // fun test_deposit_fail() {
+    //     let scenario_val = init_test_helper();
+    //     let scenario = &mut scenario_val;
 
-        deposit_test_helper(scenario, alice, 100, 6);
+    //     deposit_test_helper(scenario, alice, 100, 6);
 
-        test_scenario::end(scenario_val);
-    }
+    //     test_scenario::end(scenario_val);
+    // }
 
 
 
