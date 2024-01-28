@@ -1,0 +1,6 @@
+{
+  "name": "bank_with_sui_dollar",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
