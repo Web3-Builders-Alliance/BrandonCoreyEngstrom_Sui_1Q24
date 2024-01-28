@@ -115,10 +115,19 @@ module sui_bank::bank {
 
 
 
+   public fun withdraw(self: &mut Bank, account: &mut Account, value: u64, ctx: &mut TxContext): Coin<SUI> {
+        assert!(account.debt == 0, EPayYourLoan);
+        assert!(account.deposit >= value, ENotEnoughBalance);
+
+        account.deposit = account.deposit - value;
+
+        coin::from_balance(balance::split(&mut self.balance, value), ctx)
+    }
 
 
+    // public fun borrow(account: &mut Account , cap: &mut CapWrapper, value: u64, ctx: &mut TxContext) : Coin<SUI_DOLLAR> {
 
-
+    // }
 
 
 
