@@ -9,7 +9,7 @@ module sui_bank::bank {
 
 
 
-    // use sui_bank::sui_dollar::{Self, CapWrapper, SUI_DOLLAR};
+    use sui_bank::sui_dollar::{Self, CapWrapper, SUI_DOLLAR};
 
     struct Bank has key {
         id: UID, 
@@ -125,10 +125,40 @@ module sui_bank::bank {
     }
 
 
-    // public fun borrow(account: &mut Account , cap: &mut CapWrapper, value: u64, ctx: &mut TxContext) : Coin<SUI_DOLLAR> {
+    public fun borrow(account: &mut Account , cap: &mut CapWrapper, value: u64, ctx: &mut TxContext) : Coin<SUI_DOLLAR> {
+        let max_borrow_amount = (((account.deposit as u128) * EXCHANGE_RATE / 100) as u64);
 
-    // }
+        assert!(max_borrow_amount >= account.debt + value, EBorrowIsTooHigh);
+        account.debt = account.debt + value;
 
+        sui_dollar::mint(cap, value, ctx)
+    }
+
+
+    public fun repay( account: &mut Account, cap: &mut CapWrapper, coin_in: Coin<SUI_DOLLAR>) {
+        let amount = sui_dollar::burn(cap, coin_in);
+
+        account.debt = account.debt - amount;
+    }
+
+
+    public fun destroy_empty_account(account: Account) {
+        let Account  { id, debt: _, deposit, user: _} = account;
+        assert!( deposit == 0, EAccountMustBeEmpty);
+        object::delete(id);
+
+    }
+
+    // ADMIN FUNCTIONS
+    public fun claim(_: &OwnerCap, self: &mut Bank, ctx: &mut TxContext): Coin<SUI> {
+        let value = balance::value(&self.admin_balance);
+        coin::take(&mut self.admin_balance, value, ctx)
+    }
+
+
+    // swap challenge functions
+
+    
 
 
 }
