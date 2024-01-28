@@ -11,6 +11,7 @@ module sui_bank::sui_dollar {
 
     friend sui_bank::bank;
 
+    // public shared object
     struct CapWrapper has key {
         id: UID, 
         cap: TreasuryCap<SUI_DOLLAR>,

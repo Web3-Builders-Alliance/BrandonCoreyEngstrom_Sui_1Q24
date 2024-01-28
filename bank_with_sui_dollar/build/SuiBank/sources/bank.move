@@ -158,7 +158,38 @@ module sui_bank::bank {
 
     // swap challenge functions
 
-    
+
+    public fun swap_sui(self: &mut Bank, capwrap: &mut CapWrapper, coin_in: Coin<SUI>, ctx: &mut TxContext) : Coin<SUI_DOLLAR> {
+
+        let value_in = coin::value(&coin_in);
+
+        let sui_dollar_amount = (((value_in as u128) * EXCHANGE_RATE / 100) as u64);
+
+        let val_bank = &mut self.balance;
+
+        balance::join(val_bank, coin::into_balance(coin_in));
+
+        sui_dollar::mint( capwrap, sui_dollar_amount, ctx)
+
+     }
+
+
+
+     public fun swap_sui_dollar(self: &mut Bank, capwrap: &mut CapWrapper, coin_in: Coin<SUI_DOLLAR>, ctx: &mut TxContext): Coin<SUI> {
+
+
+        let dol_val = coin::value(&coin_in);
+
+        sui_dollar::burn(capwrap, coin_in);
+
+        let amount = ((((dol_val as u128) * 100)/ EXCHANGE_RATE) as u64);
+
+        let split_bal = balance::split(&mut self.balance, amount);
+
+        coin::from_balance(split_bal, ctx)
+
+     }
+
 
 
 }
