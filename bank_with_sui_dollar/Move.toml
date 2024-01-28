@@ -1,8 +1,12 @@
 [package]
-name = "bank_with_sui_dollar"
+name = "SuiBank"
+version = "0.0.1"
 
 [dependencies]
+MoveStdlib = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib", rev = "framework/testnet" }
 Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
 
 [addresses]
-bank_with_sui_dollar = "0x0"
+sui_bank = "0x0"
+std = "0x1"
+sui="0x2"
