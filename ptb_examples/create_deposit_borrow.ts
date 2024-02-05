@@ -30,8 +30,8 @@ const packageObjectId = '0x40bff03fc40cfda9659f37f0d1902154e5822352c5b9c84dcfe02
         // Create new account
         txb.moveCall({
             target: `${packageObjectId}::bank::new_account`,
-            arguments: [], // Add necessary arguments
-            typeArguments: [] // Add necessary type arguments
+            arguments: [], 
+            typeArguments: [] 
         });
 
         // Deposit funds to the account

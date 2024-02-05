@@ -12,3 +12,6 @@ create and transfer accounts for a list of users
 create_account + deposit + borrow
 
 repay + withdraw +  destroy
+
+
+ptb transaction example [here](https://suiexplorer.com/txblock/2vCkYcvJGTADNz4VgYUbb3Nw58QRuXNNMwW9B61UCGXU?network=devnet)
