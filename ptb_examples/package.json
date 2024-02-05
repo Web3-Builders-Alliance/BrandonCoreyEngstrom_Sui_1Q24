@@ -5,7 +5,10 @@
   "license": "MIT",
   "scripts": {
     "details": "ts-node ./transaction_details.ts",
-    "ptb": "ts-node ./ptb_moveCall.ts"
+    "ptb": "ts-node ./ptb_moveCall.ts",
+    "create_deposit_borrow": "ts-node ./create_deposit_borrow.ts",
+    "transfer_to_list": "ts-node ./transfer_accounts_list_users.ts",
+    "repay_withdraw_destroy": "ts-node ./repay_withdraw_destroy.ts"
     
   },
   "dependencies": {
