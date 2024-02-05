@@ -1,6 +1,6 @@
 # Next Assignement:
 
-# CREATE 3 PTBs
+**CREATE 3 PTBs**
 
 ---
 
@@ -17,3 +17,17 @@
 
 **3 - repay + withdraw +  destroy**
 
+---
+
+---
+
+
+**Refrences:**
+
+[Programmable Transaction Blocks](https://docs.sui.io/concepts/transactions/prog-txn-blocks)
+
+
+[TypeScript SDK: Sui Programmable Transaction Blocks Basics](https://docs.sui.io/guides/developer/sui-101/building-ptb)
+
+
+[Sui Docs: Building Programmable Transaction Blocks](https://sdk.mystenlabs.com/typescript/transaction-building/basics)

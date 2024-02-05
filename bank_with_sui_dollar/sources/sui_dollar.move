@@ -3,7 +3,7 @@ module sui_bank::sui_dollar {
     use std::option;
     use sui::transfer;
     use sui::object::{Self, UID};
-    use sui::tx_context::{Self, TxContext};
+    use sui::tx_context::TxContext;
     use sui::coin::{Self, Coin, TreasuryCap};
 
 
