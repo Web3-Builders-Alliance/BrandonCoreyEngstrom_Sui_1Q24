@@ -1,0 +1,33 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+body {
+ 
+  color: rgb(var(--foreground-rgb));
+  background-color: #000000; 
+  background-image: url('https://i.imgur.com/m8KuaOS.gif'); 
+  background-repeat: repeat; 
+  background-size: auto; 
+  background-position: top left;
+}
+
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+
+/* Animation keyframes */
+@keyframes move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(100%); } /* Example - move horizontally */
+}
+
+
+
+
