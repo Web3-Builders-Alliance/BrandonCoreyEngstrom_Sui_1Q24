@@ -1,4 +1,3 @@
-// Import necessary libraries and components
 import React, { useState } from 'react';
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -6,18 +5,17 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import cn from 'classnames';
 import { useWallet } from '@suiet/wallet-kit';
-
 import { TransactionBlock } from '@mysten/sui.js/transactions';
+import {  PACKAGE, CLOCK  } from '../../scripts/config.ts';
 
 
 
-const txb = new TransactionBlock();
 
 
 
 const MakePrediction = () => {
-  const { connected } = useWallet();
-
+  
+  const { connected, signAndExecuteTransactionBlock } = useWallet();
   const [republican, setRepublican] = useState<string>('');
   const [democrat, setDemocrat] = useState<string>('');
 
@@ -35,17 +33,39 @@ const MakePrediction = () => {
     setValueOther((538 - numValue).toString());
   };
 
+
+
+
+
   const handlePrediction = async () => {
-    // only the first input box is needed as A + B = 538
+
     if (republican && democrat) {
+
+      const republicanValue = toUint(republican);
+      
+      if (!connected) return;
+      
+      const txb = new TransactionBlock();
+
+      const packageObjectId = `${PACKAGE}`;
+      
       txb.moveCall({
-        target: '0x0::predictrix::make_prediction',
-        arguments: [
-          { index: 0, kind: "Input", type: "pure", value: toUint(republican).toString() },
-        ],
+        target: `${packageObjectId}::kiosk_practice::make_prediction`,
+        arguments: [txb.pure.u64(republicanValue), txb.object(CLOCK)],
       });
+      
+      try {
+        const predictionData = await signAndExecuteTransactionBlock({
+          transactionBlock: txb
+        });
+        console.log('Prediction made!', predictionData);
+        alert(`Congrats! Your prediction has been made! \n Digest: ${predictionData.digest}`);
+      } catch (e) {
+        console.error('Sorry, the prediction failed to be created', e);
+      }
     }
   };
+  
 
   if (connected) {
     return (
@@ -97,3 +117,18 @@ const MakePrediction = () => {
 };
 
 export default MakePrediction;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

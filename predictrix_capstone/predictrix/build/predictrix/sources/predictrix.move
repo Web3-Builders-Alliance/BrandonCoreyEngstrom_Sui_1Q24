@@ -113,6 +113,13 @@ module predictrix::predictrix {
 
 
 
+    #[test_only]
+    friend predictrix::predictrix_tests;
+    
+
+
+
+
     // ########
     // #ERRORS#
     // ########
@@ -130,7 +137,16 @@ module predictrix::predictrix {
     // ################################## 
 
     // struct to hold game times
-    struct Epoch has key, store {
+    struct PredictEpoch has key, store {
+       id: UID,
+       start_time: u64,
+       end_time: u64,
+
+    }
+
+
+    // struct to hold game times
+    struct ReportEpoch has key, store {
        id: UID,
        start_time: u64,
        end_time: u64,
@@ -157,6 +173,11 @@ module predictrix::predictrix {
     }
 
 
+    struct GameOpen has copy, drop {
+        game_open: bool,
+    }
+
+
 
     // struct to hold a game instance
     struct Game has key, store {
@@ -164,8 +185,8 @@ module predictrix::predictrix {
         price: u64,
         pot: Balance<SUI>, 
         result: Option<u64>,  
-        predict_epoch: Epoch, 
-        report_epoch: Epoch, 
+        predict_epoch: PredictEpoch, 
+        report_epoch: ReportEpoch, 
         game_closed: bool, 
         winner_claimed: bool, 
         
@@ -199,6 +220,7 @@ module predictrix::predictrix {
     }
 
     
+
     public fun get_time(clock: &Clock)  {
         event::emit(TimeEvent {
             timestamp_ms: clock::timestamp_ms(clock),
@@ -209,7 +231,10 @@ module predictrix::predictrix {
 
 
     // create a new game instance
-    fun new_game(price: u64, predict_epoch: Epoch, report_epoch: Epoch, ctx: &mut TxContext) : Game {
+    fun new_game(price: u64, predict_epoch: PredictEpoch, report_epoch: ReportEpoch, ctx: &mut TxContext) : Game {
+       
+        
+       
         Game {
             id: object::new(ctx),
             price, 
@@ -220,13 +245,16 @@ module predictrix::predictrix {
             game_closed: false,
             winner_claimed: false,
         }
+
+        
+
     }
 
 
   
 
-    // starts the game and allows predictions to be made
-    public fun start_game(start_game_cap: StartGameCap, price: u64, predict_epoch: Epoch, report_epoch: Epoch, clock: &Clock, ctx: &mut TxContext)  {
+    // startst the game and allows predictions to be made
+    public fun start_game(start_game_cap: StartGameCap, price: u64, predict_epoch: PredictEpoch, report_epoch: ReportEpoch, clock: &Clock, ctx: &mut TxContext)  {
 
        
 
@@ -239,12 +267,20 @@ module predictrix::predictrix {
         });
 
 
+        event::emit(GameOpen {
+            game_open: true,
+        });
+
+
         let game = new_game(price, predict_epoch, report_epoch, ctx);
         
-        transfer::share_object(game);
+        transfer::public_share_object(game);
 
         let StartGameCap { id } = start_game_cap;
         object::delete(id);
+
+
+        
         
     }
 
@@ -257,6 +293,11 @@ module predictrix::predictrix {
         game_instance.game_closed = true;
         
         // switchboard_oracle::save_aggregator_info(aggregator, ctx);
+
+        event::emit(GameOpen {
+            game_open: false,
+        });
+
 
         let EndGameCap { id } = end_game_cap;
         object::delete(id);
@@ -338,9 +379,9 @@ module predictrix::predictrix {
     
 
 
-    public fun set_predict_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : Epoch  {
+    public fun set_predict_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : PredictEpoch  {
         
-        let predict_epoch  = Epoch {
+        let predict_epoch  = PredictEpoch {
             id: object::new(ctx),
             start_time,
             end_time,
@@ -353,9 +394,9 @@ module predictrix::predictrix {
 
 
 
-    public fun set_report_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : Epoch {
+    public fun set_report_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : ReportEpoch {
         
-        let report_epoch  = Epoch {
+        let report_epoch  = ReportEpoch {
             id: object::new(ctx),
             start_time,
             end_time,
@@ -391,12 +432,14 @@ module predictrix::predictrix {
     }
 
 
+
+
     // init creates the transfer policy and stores it in the regisry which is a shared object 
     // and transfers the transfer policy cap and game owner cap to the sender
     fun init(otw: PREDICTRIX, ctx: &mut TxContext) {
 
-        
 
+        
         let publisher = package::claim(otw, ctx);
 
 
@@ -478,7 +521,7 @@ module predictrix::predictrix {
    
 
 
-   public fun make_prediction( predict: u64, clock: &Clock, ctx: &mut TxContext) : Prediction {
+   public fun make_prediction( predict: u64, clock: &Clock, ctx: &mut TxContext)  {
         
       
         event::emit(PredictionMade {
@@ -498,23 +541,16 @@ module predictrix::predictrix {
         };
 
 
-        prediction
+        transfer::public_transfer(prediction, tx_context::sender(ctx));
        
     }
 
 
 
 
-   
 
 
 
-
-    
-
-
-
-    
     // ###################################
     // ############KIOSK LOGIC############
     // ###################################
@@ -603,13 +639,20 @@ module predictrix::predictrix {
 
 
     // deletes the epoch
-    public fun delete_epoch(epoch: Epoch, ctx: &mut TxContext) {
-        let Epoch { id, start_time: _, end_time: _ } = epoch;
+    public fun delete_predict_epoch(predict_epoch: PredictEpoch, ctx: &mut TxContext) {
+        let PredictEpoch { id, start_time: _, end_time: _ } = predict_epoch;
         object::delete(id);
     }
 
 
+     // deletes the epoch
+    public fun delete_report_epoch(report_epoch: ReportEpoch, ctx: &mut TxContext) {
+        let ReportEpoch { id, start_time: _, end_time: _ } = report_epoch;
+        object::delete(id);
+    }
 
+
+   // deletes the game owner cap
     public fun delete_game_owner_cap(game_owner_cap: GameOwnerCap, ctx: &mut TxContext) {
         let GameOwnerCap { id } = game_owner_cap;
         object::delete(id);
@@ -628,104 +671,13 @@ module predictrix::predictrix {
 
 
 
-
-   
-
-    // ###################################
-    // ############TESTS##################
-    // ###################################
-
-    #[test]
-    public fun test_init() {
-
-        use sui::test_scenario;
-        use sui::test_utils;
-        use sui::kiosk_test_utils::{Self as test, Asset};
-        use std::debug;
-
-        let admin = @0x1;
-        let user1 = @0x2;
-        let scenario = test_scenario::begin(admin);
-        let scenario_val = &mut scenario;
-
-        let otw = PREDICTRIX {};
-
-        // test the init function
-        {
-            
-            init(otw, test_scenario::ctx(scenario_val));
-            
-            
-        };
-
-        // test the sender has the game owner cap 
-        test_scenario::next_tx(scenario_val, admin);
-        {
-            
-            let ctx = test_scenario::ctx(scenario_val);
-            let sender_address = tx_context::sender(ctx);
-            assert!(sender_address == admin, 0);
-
-            let game_owner_cap = test_scenario::take_from_sender<GameOwnerCap>(scenario_val);
-            test_scenario::return_to_sender(scenario_val, game_owner_cap);
-            
-        };
-
-
-        // test making a prediction
-        // TODO
-        // fix the transfer policy in the test then test for the prediction
-        test_scenario::next_tx(scenario_val, admin);
-        {
-            // setup
-            let guess = 444;
-
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-
-            let coin = coin::mint_for_testing<SUI>(100, test_scenario::ctx(scenario_val));
-            
-            let (kiosk, kiosk_owner_cap) = test::get_kiosk(test_scenario::ctx(scenario_val));
-
-            let publisher = test::get_publisher(test_scenario::ctx(scenario_val));
-
-            
-
-
-            std::debug::print(&clock);
-            
-            
-
-            // MAKE PREDICTION AND BURN PREDICTION
-            
-
-
-
-
-            // CLEANUP 
-
-            transfer::public_transfer(coin, admin);
-
-            test::return_publisher(publisher);
-
-            test::return_kiosk(kiosk, kiosk_owner_cap, test_scenario::ctx(scenario_val));
-           
-            
-
-            clock::destroy_for_testing(clock);
-        };
-
-
-        
-       
-        
-        
-        test_scenario::end(scenario);   
-
+    // wrapper for the init function allowing it to be called from the test module
+    #[test_only]
+    public fun init_for_testing(otw: PREDICTRIX, ctx: &mut TxContext) {
+        init(otw, ctx);
     }
 
-    
-
-
+   
 
 
 }
