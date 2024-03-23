@@ -206,11 +206,12 @@ module predictrix::predictrix {
 
 
     // event emitted when a winner is reported  
-    // struct Winner has copy, drop {
-    //     prediction: Option<u64>,
-    //     made_by: address,
-    //     time: u64,
-    // 
+    struct Winner has copy, drop {
+        prediction: Option<u64>,
+        made_by: address,
+        time: u64,
+    }
+    
 
 
     // GET TIME
@@ -312,71 +313,51 @@ module predictrix::predictrix {
 
 
 
-    // claim the winner within timeframe by ref, add event to mark the winner
-    // public fun claim_winner(prediction: Prediction, game_instance: Game, clock: &Clock, ctx: &mut TxContext ) : (bool, address, Balance<SUI>, bool) {
-        
-    //     assert!(game_instance.game_closed, EGameNotClosed);
-
-    //     //checks the timestamp is within the report epoch timeframe
-    //     assert!(clock::timestamp_ms(clock) > game_instance.report_epoch.start_time, EOutsideWindow);
-    //     assert!(clock::timestamp_ms(clock) < game_instance.report_epoch.end_time, EOutsideWindow);
-
-    //     // checks the prediction is within the predict epoch timeframe
-    //     assert!(prediction.timestamp > game_instance.predict_epoch.start_time, EOutsideWindow);
-    //     assert!(prediction.timestamp < game_instance.predict_epoch.end_time, EOutsideWindow);
-
-    //     assert!(prediction.prediction == game_instance.result, EIncorrectPrediction);
-
-    //     let bool_val = true;
-
-    //     if(prediction.prediction == game_instance.result) {
-    //         event::emit(Winner {
-    //             prediction: prediction.prediction,
-    //             made_by: tx_context::sender(ctx),
-    //             time: clock::timestamp_ms(clock),
-    //         });
-    //     };
-
-
-    //     if(prediction.prediction == game_instance.result) {
-    //         let bool_val = true;
-    //     } else {
-    //         let bool_val = false;
-    //     };
-
-        
-    //     if(prediction.prediction == game_instance.result) {
-
-    //         game_instance.winner_claimed = true;
-           
-    //         let bal_all = balance::withdraw_all(&mut game_instance.pot);
-
-    //         let winning_pot = coin::from_balance(bal_all, ctx);
-
-    //         transfer::public_transfer(winning_pot, tx_context::sender(ctx));
-    //     };
-        
-    //     let Game { id, price: _, pot, result: _, predict_epoch, report_epoch, game_closed: _, winner_claimed} = game_instance;
-    //     object::delete(id);
-
-
-    //     let Epoch { id, start_time: _, end_time: _} = predict_epoch;
-    //     object::delete(id);
-
-
-    //     let Epoch { id, start_time: _, end_time: _} = report_epoch;
-    //     object::delete(id);
-
-    //     let Prediction {id, prediction_id: _, prediction: _, } = prediction;
-    //     object::delete(id);
-
-
-
-    //     (bool_val, tx_context::sender(ctx), pot, winner_claimed)
-
-
-    // } 
     
+    public fun claim_winner( prediction: Prediction, game_instance: &mut Game, clock: &Clock, ctx: &mut TxContext)  { 
+            
+        assert!(game_instance.game_closed, EGameNotClosed);
+        assert!(clock::timestamp_ms(clock) > game_instance.report_epoch.start_time, EOutsideWindow);
+        assert!(clock::timestamp_ms(clock) < game_instance.report_epoch.end_time, EOutsideWindow);
+
+
+        assert!(prediction.timestamp > game_instance.predict_epoch.start_time, EOutsideWindow);
+        assert!(prediction.timestamp < game_instance.predict_epoch.end_time, EOutsideWindow);
+
+
+        assert!(prediction.prediction == game_instance.result, EIncorrectPrediction);
+
+
+        game_instance.winner_claimed = true;
+
+
+        let bal_all = balance::withdraw_all(&mut game_instance.pot);
+        let winning_pot = coin::from_balance<SUI>(bal_all, ctx); 
+
+
+        transfer::public_transfer(winning_pot, tx_context::sender(ctx));
+
+       
+        event::emit(Winner {
+            prediction: prediction.prediction,
+            made_by: tx_context::sender(ctx),
+            time: clock::timestamp_ms(clock),
+        });
+
+
+        
+        let Prediction {id, prediction_id: _, prediction: _, timestamp: _ } = prediction;
+        object::delete(id);
+
+         
+
+    }
+
+        
+
+ 
+    
+
 
 
     public fun set_predict_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : PredictEpoch  {
@@ -409,7 +390,85 @@ module predictrix::predictrix {
 
 
 
+
     
+    const EIncorrectPaymentAmount: u64 = 11;
+
+    // event emitted when a balance is added to the game
+    struct GamePotIncreased has copy, drop {
+        amount: u64,
+        
+    }
+
+
+
+
+    // puts a coin into the game balance
+    public fun add_game_balance(game: &mut Game, deposit: Coin<SUI>, ctx: &mut TxContext) {
+        let pot = &mut game.pot;
+
+        event::emit(GamePotIncreased { amount: coin::value<SUI>(&deposit) });
+
+        balance::join(pot, coin::into_balance(deposit));
+
+        
+    }
+
+
+
+
+    
+    // ########################################
+    // ############PREDICTION LOGIC############
+    // ########################################
+
+    // event emitted when a prediction is made
+    // user only needs to predict the repub and dem can be caluculated from the total count
+    struct PredictionMade has copy, drop {
+        prediction: Option<u64>,
+        made_by: address,
+    }
+
+
+
+    // the prediction struct
+    struct Prediction has key, store {
+        id: UID,
+        prediction_id: ID,
+        prediction: Option<u64>,
+        timestamp: u64,
+        
+    }
+
+
+
+    public fun make_prediction( predict: u64, payment: Coin<SUI>, game: &mut Game, clock: &Clock, ctx: &mut TxContext)  {
+        
+        
+        assert!(coin::value(&payment) == game.price, EIncorrectPaymentAmount);
+
+        add_game_balance(game, payment, ctx);
+
+        event::emit(PredictionMade {
+            prediction: option::some(predict),
+            made_by: tx_context::sender(ctx),
+        });
+
+
+        let id = object::new(ctx);
+        let prediction_id = object::uid_to_inner(&id);
+
+        let prediction = Prediction {
+            id, 
+            prediction_id,
+            prediction: option::some(predict),
+            timestamp: clock::timestamp_ms(clock),
+        };
+
+
+        transfer::public_transfer(prediction, tx_context::sender(ctx));
+       
+    }
 
 
 
@@ -494,79 +553,8 @@ module predictrix::predictrix {
 
 
 
-
-
-    // ########################################
-    // ############PREDICTION LOGIC############
-    // ########################################
-
-    // event emitted when a prediction is made
-    // user only needs to predict the repub and dem can be caluculated from the total count
-    struct PredictionMade has copy, drop {
-        prediction: Option<u64>,
-        made_by: address,
-    }
-
-
-
-    // the prediction struct
-    struct Prediction has key, store {
-        id: UID,
-        prediction_id: ID,
-        prediction: Option<u64>,
-        timestamp: u64,
-        
-    }
-
-   
-
-
-   public fun make_prediction( predict: u64, clock: &Clock, ctx: &mut TxContext)  {
-        
-      
-        event::emit(PredictionMade {
-            prediction: option::some(predict),
-            made_by: tx_context::sender(ctx),
-        });
-
-
-        let id = object::new(ctx);
-        let prediction_id = object::uid_to_inner(&id);
-
-        let prediction = Prediction {
-            id, 
-            prediction_id,
-            prediction: option::some(predict),
-            timestamp: clock::timestamp_ms(clock),
-        };
-
-
-        transfer::public_transfer(prediction, tx_context::sender(ctx));
-       
-    }
-
-
-
-
-
-
-
     // ###################################
-    // ############KIOSK LOGIC############
-    // ###################################
-
-
-
-
-    // done in ptb
-    // place, take, list, delist, purchase 
-    
-
-
-   
-    
-    // ###################################
-    // ############GETTER/ SETTER LOGIC###
+    // ############GETTER LOGIC###########
     // ###################################
 
     struct GameBalance has copy, drop {
@@ -575,7 +563,7 @@ module predictrix::predictrix {
 
 
     // gets the game balance
-    public fun get_game_balance(game: &Game) : u64 {
+    public fun balance(game: &Game) : u64 {
         
         let bal = balance::value<SUI>(&game.pot);
 
@@ -585,15 +573,6 @@ module predictrix::predictrix {
 
         bal
     }
-
-
-
-    // puts a coin into the game balance
-    public fun add_game_balance(game: &mut Game, deposit: Coin<SUI>, ctx: &mut TxContext) {
-        let pot = &mut game.pot;
-        balance::join(pot, coin::into_balance(deposit));
-    }
-
 
 
 
@@ -616,7 +595,6 @@ module predictrix::predictrix {
 
 
 
-
     // withdraw from game balance
     public fun withdraw_balance_from_game(_: &GameOwnerCap, game: &mut Game, amount: u64, ctx: &mut TxContext) {
        
@@ -631,6 +609,9 @@ module predictrix::predictrix {
 
 
 
+   
+
+    
 
 
     // ###################
@@ -639,14 +620,14 @@ module predictrix::predictrix {
 
 
     // deletes the epoch
-    public fun delete_predict_epoch(predict_epoch: PredictEpoch, ctx: &mut TxContext) {
+    public entry fun delete_predict_epoch(predict_epoch: PredictEpoch, ctx: &mut TxContext) {
         let PredictEpoch { id, start_time: _, end_time: _ } = predict_epoch;
         object::delete(id);
     }
 
 
      // deletes the epoch
-    public fun delete_report_epoch(report_epoch: ReportEpoch, ctx: &mut TxContext) {
+    public entry fun delete_report_epoch(report_epoch: ReportEpoch, ctx: &mut TxContext) {
         let ReportEpoch { id, start_time: _, end_time: _ } = report_epoch;
         object::delete(id);
     }
@@ -659,6 +640,16 @@ module predictrix::predictrix {
     }
 
 
+    // deletes the game
+    public fun delete_game(game: Game, _: &GameOwnerCap, ctx: &mut TxContext) : Balance<SUI> {
+        let Game { id, price: _, pot, result: _, predict_epoch, report_epoch, game_closed: _, winner_claimed: _ } = game;
+        object::delete(id);
+        delete_predict_epoch(predict_epoch, ctx);
+        delete_report_epoch(report_epoch, ctx);
+        pot
+    }
+
+
 
     // deletes the prediction
     public fun delete_prediction(prediction: Prediction, ctx: &mut TxContext) {
@@ -668,6 +659,32 @@ module predictrix::predictrix {
 
     }
 
+
+
+
+
+
+    // ###################################
+    // ############KIOSK LOGIC############
+    // ###################################
+
+
+
+
+    // kiosk logic in done through ptbs
+    // place, take, list, delist
+    
+
+
+
+
+
+
+
+
+    // ###################################
+    // ############TEST LOGIC#############
+    // ###################################
 
 
 

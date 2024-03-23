@@ -35,6 +35,7 @@ module predictrix::predictrix_tests {
     use predictrix::predictrix::PredictEpoch;
     use predictrix::predictrix::delete_predict_epoch;
     use predictrix::predictrix::delete_report_epoch;
+    use predictrix::predictrix::claim_winner;
 
 
 
@@ -47,6 +48,7 @@ module predictrix::predictrix_tests {
     // ###################################
     // ############TESTS##################
     // ###################################
+
 
 
     fun init_test_helper() : test_scenario::Scenario {
@@ -69,8 +71,6 @@ module predictrix::predictrix_tests {
             scenario
 
         }
-
-
 
 
 
@@ -128,7 +128,6 @@ module predictrix::predictrix_tests {
 
             
         };
-
 
 
 
@@ -450,9 +449,6 @@ module predictrix::predictrix_tests {
 
 
 
-
-
-
     public fun winner_tests(){
 
 
@@ -474,8 +470,8 @@ module predictrix::predictrix_tests {
             let clock = clock::create_for_testing(test_scenario::ctx(scenario_val)); 
             let price = 100;
 
-            let predict_epoch = set_predict_epoch(222, 333, test_scenario::ctx(scenario_val));
-            let report_epoch = set_report_epoch(333, 444, test_scenario::ctx(scenario_val));
+            let predict_epoch = set_predict_epoch(0, 5, test_scenario::ctx(scenario_val));
+            let report_epoch = set_report_epoch(0, 444, test_scenario::ctx(scenario_val));
 
 
 
@@ -511,6 +507,7 @@ module predictrix::predictrix_tests {
             // admin makes a prediction
             let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
             let guess = 444;
+
 
             make_prediction(guess, &clock, test_scenario::ctx(scenario_val));
 
@@ -559,22 +556,20 @@ module predictrix::predictrix_tests {
         // CLAIM WINNINER
         test_scenario::next_tx(scenario_val, admin);
         {
+            let prediction = test_scenario::take_from_sender<Prediction>(scenario_val);
+            let game_instance = test_scenario::take_shared<Game>(scenario_val);
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
            
+
+            claim_winner(prediction, &mut game_instance, &clock, test_scenario::ctx(scenario_val));
+            
+
+            clock::destroy_for_testing(clock);
+            test_scenario::return_shared(game_instance);
+
 
 
         };
-
-
-
-
-
-        // TEMPLATE
-        test_scenario::next_tx(scenario_val, admin);
-        {
-           
-
-        };
-
 
 
 

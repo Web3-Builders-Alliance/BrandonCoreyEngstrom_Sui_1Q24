@@ -57,12 +57,12 @@ export const DEV_WALLET = "0x07095af51002db0e9be284b8dab97263f77fec2a1be68cd42b7
 
 
 // created in init
-export const PACKAGE = "0xcd57af4426f53698e011dac73ca0703d6399eb8f83fbd9e3ddd75c0e2de7db56";
-export const START_GAME_CAP = "0xa4ecb4b05c0137e5178658a8beec84373e5d90de20b590312ed071e5ed23a5c4";
-export const END_GAME_CAP = "0xdab932fd52efb97360f96789ee0973cb637e5331fc1bc818ae13bbaa3e1a86fb";
-export const GAME_OWNER_CAP = "0xca747f2cdafe81220973ed5be0aa468102628585ec6af232f7191c48ce9dbdf0";
-export const TRANSFER_POLICY  = "export const itemType = `${PACKAGE}::kiosk_practice::Prediction`;";
-export const TRANSFER_POLICY_CAP = "0x2ff59d79e8c34f79d62f8c2ee4db27cf2bc00efca6b94783ad2e0d96274d9028";
+export const PACKAGE = "0xeee834a8c14dda5c0722cb99470cb9613ec9aad3ac343476c910933c7eb2952b";
+export const START_GAME_CAP = "0x714fffa412f7b3580682536671a7181b886c6071887082573cc010750a079310";
+export const END_GAME_CAP = "0x6975936e7df459647be317a085b6b244a7d247ed939cc82f58ddb4321f23a772";
+export const GAME_OWNER_CAP = "0x3fac1172066821fe6ea4a24f2fa307a5d4d0edba1103f696646744dc8aa5ebf8";
+export const TRANSFER_POLICY  = "";
+export const TRANSFER_POLICY_CAP = "0x3d12fd42c98fd5daaacf82fddee2ba55d36a3f68240d0191889e14257a3bd692";
 export const PUBLISHER = "";
 export const UPGRADE_CAP = "";
 export const ITEMTYPE = `${PACKAGE}::kiosk_practice::Prediction`;
@@ -73,29 +73,30 @@ export const GAME_PRICE = "1000000";
 
 // (election event on Nov. 5)
 // get from get time event log
-export const PREDICT_START_TIME = 1710651841557;
+// currently set for testing
+export const PREDICT_START_TIME = 1711171075193;
 
-// November 3, 2024, at 12:00 AM (GMT)
-export const PREDICT_END_TIME = 1730592000000;
+// November 3, 2024, at 12:00 AM (GMT) = 1730592000000
+export const PREDICT_END_TIME = 1711171099193;
 
-// November 10, 2024 at 12:00 AM (GMT)
-export const REPORT_START_TIME = 1731196800000;
+// November 10, 2024 at 12:00 AM (GMT) = 1731196800000
+export const REPORT_START_TIME = 1711171075193;
 
-// December 1, 2024 at 12:00 AM (GMT)
-export const REPORT_END_TIME = 1733011200000;
+// December 1, 2024 at 12:00 AM (GMT) = 1733011200000
+export const REPORT_END_TIME = 1711171099193;
 
 
 
 
 //CLOSE GAME SCRIPT
 // game id
-export const GAME_ID = "0xfda03fa340647d1e87e42cb56a135c5b5b5cd066bd8cf366342b9c8df497bd09";
+export const GAME_ID = "0x5e2842c1727d6430dbbe6496bdbe7f681f407ad9e96685ab18f6c63dc2d0bf3f";
 
 
 
 
 // ADD BALANCE TO GAME SCRIPT
-export const COIN_TO_ADD = "0x58e0ccb2acbdb75aef883e1b61710cfe371d4e3e993715499526e7965acdc9b5";
+export const COIN_TO_ADD = "0x81e5534a23552d8e80250a62729a193df59dab977c033feda484493b859236f6";
 
 
 
@@ -106,10 +107,10 @@ export const GAME_RESULT = "223";
 
 
 // PREDCITION SCRIPT
-export const PREDICTION = "0xeff1dcd15977e3bb42fdab5322e8ed1c07af195250cb68a3f69e5d02117d1091";
-export const PREDICTION_ID = "0xeff1dcd15977e3bb42fdab5322e8ed1c07af195250cb68a3f69e5d02117d1091";
+export const PREDICTION = "0xf2a6c426ae44abb525f5375fedc2d167f086af09268b41333f103623dd4f6545";
+export const PREDICTION_ID = "0xf2a6c426ae44abb525f5375fedc2d167f086af09268b41333f103623dd4f6545";
 
-export const PREDICTION_TWO = "0xc8315a7ec44be9c23914d114b4eaab9b07270f04bbdad728858a166787dc8ab1";
+export const PREDICTION_TWO = "";
 
 
 export const GUESS = 444;
@@ -117,8 +118,8 @@ export const GUESS = 444;
 
 
 // KIOSK SCRIPT
-export const KIOSK = "0xf9c26f45757096716492210edc25cb846088a6300185137375cbc2ba5ea70dde";
-export const KIOSK_OWNER_CAP = "0x6a7421356a817ad2c948ad84356612a13034c431b95360c8bad9520b14eaf554";
+export const KIOSK = "";
+export const KIOSK_OWNER_CAP = "";
 
 
 

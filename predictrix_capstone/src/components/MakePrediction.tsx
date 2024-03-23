@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import cn from 'classnames';
 import { useWallet } from '@suiet/wallet-kit';
+
 import { TransactionBlock } from '@mysten/sui.js/transactions';
-import {  PACKAGE, CLOCK  } from '../../scripts/config.ts';
-
-
+import {  PACKAGE, CLOCK, GAME_ID  } from '../../scripts/config.ts';
 
 
 
@@ -47,12 +46,20 @@ const MakePrediction = () => {
       
       const txb = new TransactionBlock();
 
-      const packageObjectId = `${PACKAGE}`;
+
+      txb.setGasBudget(10000000);
+
+
+        const [coin] = txb.splitCoins(txb.gas, [txb.pure(1000000)]);
+
+
       
       txb.moveCall({
-        target: `${packageObjectId}::kiosk_practice::make_prediction`,
-        arguments: [txb.pure.u64(republicanValue), txb.object(CLOCK)],
+        target: `${PACKAGE}::kiosk_practice::make_prediction`,
+        arguments: [txb.pure.u64(republicanValue), coin, txb.object(GAME_ID), txb.object(CLOCK)],
       });
+
+
       
       try {
         const predictionData = await signAndExecuteTransactionBlock({

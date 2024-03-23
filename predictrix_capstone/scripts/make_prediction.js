@@ -5,7 +5,7 @@ import walletDev from './dev-wallet.json' assert { type: 'json' };
 
 import { WebSocket } from 'ws';
 
-import {  PACKAGE, CLOCK, GUESS  } from './config.js';
+import {  PACKAGE, CLOCK, GUESS, GAME_ID, DEV_WALLET  } from './config.js';
 
 
 // ###################################
@@ -42,11 +42,17 @@ const client = new SuiClient({
         const txb = new TransactionBlock();
 
 
+        
+        txb.setGasBudget(10000000);
 
 
+        // Create a new coin with balance 100, based on the coins used as gas payment.
+        const [coin] = txb.splitCoins(txb.gas, [txb.pure(1000000)]);
+
+    
         txb.moveCall({
             target: `${PACKAGE}::kiosk_practice::make_prediction`,
-            arguments: [  txb.pure.u64(GUESS), txb.object(CLOCK) ],
+            arguments: [  txb.pure.u64(GUESS), txb.object(coin), txb.object(GAME_ID), txb.object(CLOCK) ],
         });
 
         
