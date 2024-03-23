@@ -22,10 +22,9 @@ body {
 }
 
 
-/* Animation keyframes */
 @keyframes move {
   0% { transform: translateX(0); }
-  100% { transform: translateX(100%); } /* Example - move horizontally */
+  100% { transform: translateX(100%); } 
 }
 
 
