@@ -390,7 +390,85 @@ module predictrix::predictrix {
 
 
 
+
     
+    const EIncorrectPaymentAmount: u64 = 11;
+
+    // event emitted when a balance is added to the game
+    struct GamePotIncreased has copy, drop {
+        amount: u64,
+        
+    }
+
+
+
+
+    // puts a coin into the game balance
+    public fun add_game_balance(game: &mut Game, deposit: Coin<SUI>, ctx: &mut TxContext) {
+        let pot = &mut game.pot;
+
+        event::emit(GamePotIncreased { amount: coin::value<SUI>(&deposit) });
+
+        balance::join(pot, coin::into_balance(deposit));
+
+        
+    }
+
+
+
+
+    
+    // ########################################
+    // ############PREDICTION LOGIC############
+    // ########################################
+
+    // event emitted when a prediction is made
+    // user only needs to predict the repub and dem can be caluculated from the total count
+    struct PredictionMade has copy, drop {
+        prediction: Option<u64>,
+        made_by: address,
+    }
+
+
+
+    // the prediction struct
+    struct Prediction has key, store {
+        id: UID,
+        prediction_id: ID,
+        prediction: Option<u64>,
+        timestamp: u64,
+        
+    }
+
+
+
+    public fun make_prediction( predict: u64, payment: Coin<SUI>, game: &mut Game, clock: &Clock, ctx: &mut TxContext)  {
+        
+        
+        assert!(coin::value(&payment) == game.price, EIncorrectPaymentAmount);
+
+        add_game_balance(game, payment, ctx);
+
+        event::emit(PredictionMade {
+            prediction: option::some(predict),
+            made_by: tx_context::sender(ctx),
+        });
+
+
+        let id = object::new(ctx);
+        let prediction_id = object::uid_to_inner(&id);
+
+        let prediction = Prediction {
+            id, 
+            prediction_id,
+            prediction: option::some(predict),
+            timestamp: clock::timestamp_ms(clock),
+        };
+
+
+        transfer::public_transfer(prediction, tx_context::sender(ctx));
+       
+    }
 
 
 
@@ -475,79 +553,8 @@ module predictrix::predictrix {
 
 
 
-
-
-    // ########################################
-    // ############PREDICTION LOGIC############
-    // ########################################
-
-    // event emitted when a prediction is made
-    // user only needs to predict the repub and dem can be caluculated from the total count
-    struct PredictionMade has copy, drop {
-        prediction: Option<u64>,
-        made_by: address,
-    }
-
-
-
-    // the prediction struct
-    struct Prediction has key, store {
-        id: UID,
-        prediction_id: ID,
-        prediction: Option<u64>,
-        timestamp: u64,
-        
-    }
-
-   
-
-
-   public fun make_prediction( predict: u64, clock: &Clock, ctx: &mut TxContext)  {
-        
-      
-        event::emit(PredictionMade {
-            prediction: option::some(predict),
-            made_by: tx_context::sender(ctx),
-        });
-
-
-        let id = object::new(ctx);
-        let prediction_id = object::uid_to_inner(&id);
-
-        let prediction = Prediction {
-            id, 
-            prediction_id,
-            prediction: option::some(predict),
-            timestamp: clock::timestamp_ms(clock),
-        };
-
-
-        transfer::public_transfer(prediction, tx_context::sender(ctx));
-       
-    }
-
-
-
-
-
-
-
     // ###################################
-    // ############KIOSK LOGIC############
-    // ###################################
-
-
-
-
-    // done in ptb
-    // place, take, list, delist, purchase 
-    
-
-
-   
-    
-    // ###################################
-    // ############GETTER/ SETTER LOGIC###
+    // ############GETTER LOGIC###########
     // ###################################
 
     struct GameBalance has copy, drop {
@@ -556,7 +563,7 @@ module predictrix::predictrix {
 
 
     // gets the game balance
-    public fun get_game_balance(game: &Game) : u64 {
+    public fun balance(game: &Game) : u64 {
         
         let bal = balance::value<SUI>(&game.pot);
 
@@ -566,15 +573,6 @@ module predictrix::predictrix {
 
         bal
     }
-
-
-
-    // puts a coin into the game balance
-    public fun add_game_balance(game: &mut Game, deposit: Coin<SUI>, ctx: &mut TxContext) {
-        let pot = &mut game.pot;
-        balance::join(pot, coin::into_balance(deposit));
-    }
-
 
 
 
@@ -597,7 +595,6 @@ module predictrix::predictrix {
 
 
 
-
     // withdraw from game balance
     public fun withdraw_balance_from_game(_: &GameOwnerCap, game: &mut Game, amount: u64, ctx: &mut TxContext) {
        
@@ -612,6 +609,9 @@ module predictrix::predictrix {
 
 
 
+   
+
+    
 
 
     // ###################
@@ -659,6 +659,32 @@ module predictrix::predictrix {
 
     }
 
+
+
+
+
+
+    // ###################################
+    // ############KIOSK LOGIC############
+    // ###################################
+
+
+
+
+    // done in ptb
+    // place, take, list, delist, purchase 
+    
+
+
+
+
+
+
+
+
+    // ###################################
+    // ############TEST LOGIC#############
+    // ###################################
 
 
 

@@ -671,8 +671,8 @@ module predictrix::predictrix {
 
 
 
-    // kiosk logic in done through ptbs
-    // place, take, list, delist
+    // done in ptb
+    // place, take, list, delist, purchase 
     
 
 

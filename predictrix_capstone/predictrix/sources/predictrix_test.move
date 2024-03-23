@@ -209,7 +209,7 @@ module predictrix::predictrix_tests {
 
 
     #[test]
-    public fun start_game_make_list_prediction_end_game_tests() {
+    public fun start_game_make_list_prediction_end_game_claim_winner_tests() {
 
 
 

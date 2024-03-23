@@ -1,11 +1,12 @@
 import './App.css';
 import { Container, Grid, Box } from '@mui/material';
 
-import SquareOne from "./components/Genie";
-import About from "./components/ConfirmWinner";
-import Tokenomics from "./components/About";
+import Genie from "./components/Genie";
+import ConfirmWinner from "./components/ConfirmWinner";
+import About from "./components/About";
+import GameStatus from './components/GameStatus';
 import Roadmap from "./components/Roadmap";
-import Mint from "./components/MakePrediction";
+import MakePrediction from "./components/MakePrediction";
 import NavBar from "./components/NavBar";
 import Footer from './components/Footer';
 
@@ -46,17 +47,20 @@ function App() {
               
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Tokenomics />
+                <About />
               </Grid>
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Mint />
+                <GameStatus />
               </Grid>
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <SquareOne />
+                <MakePrediction />
               </Grid>
-              
+
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Genie />
+              </Grid>
               
               
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -65,8 +69,10 @@ function App() {
               
 
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                <About />
+                <ConfirmWinner />
               </Grid>
+
+
             </Grid>
           </Container>
         </Box>

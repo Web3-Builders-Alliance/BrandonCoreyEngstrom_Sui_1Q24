@@ -10,12 +10,21 @@ import {ConnectButton} from '@suiet/wallet-kit';
 import '@suiet/wallet-kit/style.css';
 import '../index.css'
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "'Finger Paint', sans-serif",
+  },
+});
 
 
 
 
 const NavBar = () => {
   return (
+    <ThemeProvider theme={theme}> 
     <AppBar position="static" sx={{ backgroundColor: '#000000', elevation: 0, '.MuiToolbar-root': { backgroundColor: '#000000' } }}>
       <Toolbar>
         <img src={firework} alt="Firework" style={{ backgroundColor: '#000000', maxHeight: '50%', maxWidth: '50%' }} />
@@ -24,7 +33,7 @@ const NavBar = () => {
             variant="h1"
             component="div"
             sx={{
-              fontFamily: 'PixelSans, Arial, sans-serif',
+              // fontFamily: 'PixelSans, Arial, sans-serif',
               flexGrow: 1,
               textAlign: 'center',
               backgroundColor: '#000000',
@@ -39,6 +48,7 @@ const NavBar = () => {
         <ConnectButton style={{ padding: '10px 20px' }} />
       </Toolbar>
     </AppBar>
+    </ThemeProvider>
   );
 };
 

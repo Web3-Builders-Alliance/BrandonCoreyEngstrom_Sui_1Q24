@@ -2,8 +2,19 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import cn from 'classnames'; 
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "'Finger Paint', sans-serif",
+  },
+});
+
+
 const About = () => {
   return (
+    <ThemeProvider theme={theme}> 
     <Box sx={{
        display: 'flex', 
        flexDirection: 'column', 
@@ -23,6 +34,7 @@ const About = () => {
         Predictrix is a decentralized application that allows users to predict the outcome of the 2024 US Presidential Election using SUI. Predictrix is currently in a test phase and is for educational purposes only. No actual monetary value is exchanged. 
       </Typography>
     </Box>
+    </ThemeProvider>
   );
 };
 

@@ -73,17 +73,16 @@ export const GAME_PRICE = "1000000";
 
 // (election event on Nov. 5)
 // get from get time event log
-// currently set for testing
-export const PREDICT_START_TIME = 1711171075193;
+export const PREDICT_START_TIME = 1711147963913;
 
-// November 3, 2024, at 12:00 AM (GMT) = 1730592000000
-export const PREDICT_END_TIME = 1711171099193;
+// November 3, 2024, at 12:00 AM (GMT)
+export const PREDICT_END_TIME = 1730592000000;
 
-// November 10, 2024 at 12:00 AM (GMT) = 1731196800000
-export const REPORT_START_TIME = 1711171075193;
+// November 10, 2024 at 12:00 AM (GMT)
+export const REPORT_START_TIME = 1731196800000;
 
-// December 1, 2024 at 12:00 AM (GMT) = 1733011200000
-export const REPORT_END_TIME = 1711171099193;
+// February 2, 2024, at 12:00 AM (GMT)
+export const REPORT_END_TIME = 1706832000000;
 
 
 
@@ -92,6 +91,7 @@ export const REPORT_END_TIME = 1711171099193;
 // game id
 export const GAME_ID = "0x5e2842c1727d6430dbbe6496bdbe7f681f407ad9e96685ab18f6c63dc2d0bf3f";
 
+export const GAME_STATUS = false;
 
 
 

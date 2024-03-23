@@ -70,14 +70,146 @@ module predictrix::predictrix_tests {
 
             scenario
 
-        }
-
+    }
 
 
 
 
     #[test]
-    public fun predictix_tests() {
+    public fun make_delete_prediction_tests() {
+
+
+
+        let admin = @0x1;
+        let user1 = @0x2;
+       
+
+        
+        let scenario = init_test_helper();
+        let scenario_val = &mut scenario;
+
+
+
+        // TEST SENDER IS ADMIN AND HAS THE START GAME CAP 
+        test_scenario::next_tx(scenario_val, admin);
+        {
+            
+            let ctx = test_scenario::ctx(scenario_val);
+            let sender_address = tx_context::sender(ctx);
+            assert!(sender_address == admin, 0);
+
+            let start_game_cap = test_scenario::take_from_sender<StartGameCap>(scenario_val);
+            test_scenario::return_to_sender(scenario_val, start_game_cap);
+            
+        };
+
+
+
+
+        // START GAME AND SET THE PREDICTION PRICE
+        test_scenario::next_tx(scenario_val, admin);
+        {
+
+            
+
+
+            let start_game_cap = test_scenario::take_from_sender<StartGameCap>(scenario_val);
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
+
+            clock::increment_for_testing( &mut clock, 2000);
+            std::debug::print(&clock);
+
+            let price = 100;
+
+            let predict_epoch = set_predict_epoch(0, 12000, test_scenario::ctx(scenario_val));
+            let report_epoch = set_report_epoch(0, 12000, test_scenario::ctx(scenario_val));
+
+
+            start_game(start_game_cap, price, predict_epoch, report_epoch, &clock, test_scenario::ctx(scenario_val));
+
+
+            clock::destroy_for_testing(clock); 
+
+            
+        };
+
+
+
+        // TAKE AND RETURN GAME OBJECT
+        test_scenario::next_tx(scenario_val, admin);
+        {
+           
+            let game = test_scenario::take_shared<Game>(scenario_val);
+
+            test_scenario::return_shared(game);
+
+        };
+
+
+
+        // ADMIN MAKES PREDICTION
+        test_scenario::next_tx(scenario_val, admin);
+        {
+
+            // setup
+            let guess = 444;
+
+            let payment = coin::mint_for_testing<SUI>(100, test_scenario::ctx(scenario_val));
+
+            let game = test_scenario::take_shared<Game>(scenario_val);
+
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
+
+            clock::increment_for_testing( &mut clock, 4000);
+            std::debug::print(&clock);
+
+            let (kiosk, kiosk_owner_cap) = test::get_kiosk(test_scenario::ctx(scenario_val));
+
+            
+            
+
+            // prediction 
+            
+            make_prediction(guess, payment, &mut game, &clock, test_scenario::ctx(scenario_val));
+
+
+
+            // cleanup 
+
+
+            test_scenario::return_shared(game);
+
+            test::return_kiosk(kiosk, kiosk_owner_cap, test_scenario::ctx(scenario_val));
+           
+            clock::destroy_for_testing(clock);
+
+        };
+
+
+        
+
+        // ADMIN DELETES PREDICTION
+        test_scenario::next_tx(scenario_val, admin);
+        {
+             
+            let predict = test_scenario::take_from_sender<Prediction>(scenario_val);
+
+            delete_prediction(predict, test_scenario::ctx(scenario_val));
+
+
+        };
+
+
+        test_scenario::end(scenario);
+        
+
+    }
+
+
+
+
+    #[test]
+    public fun start_game_make_list_prediction_end_game_claim_winner_tests() {
 
 
 
@@ -114,10 +246,16 @@ module predictrix::predictrix_tests {
 
             let start_game_cap = test_scenario::take_from_sender<StartGameCap>(scenario_val);
             let clock = clock::create_for_testing(test_scenario::ctx(scenario_val)); 
+            
+            
+
+            clock::increment_for_testing( &mut clock, 6000);
+            std::debug::print(&clock);
+
             let price = 100;
 
-            let predict_epoch = set_predict_epoch(222, 333, test_scenario::ctx(scenario_val));
-            let report_epoch = set_report_epoch(333, 444, test_scenario::ctx(scenario_val));
+            let predict_epoch = set_predict_epoch(0, 18000, test_scenario::ctx(scenario_val));
+            let report_epoch = set_report_epoch(0, 18000, test_scenario::ctx(scenario_val));
 
 
 
@@ -131,83 +269,16 @@ module predictrix::predictrix_tests {
 
 
 
-        // TAKE AND RETURN GAME OBJECT
-        test_scenario::next_tx(scenario_val, admin);
-        {
-           
-            let game = test_scenario::take_shared<Game>(scenario_val);
-
-            test_scenario::return_shared(game);
-
-        };
-
-
-
-        // ADMIN MAKES PREDICTION
-        test_scenario::next_tx(scenario_val, admin);
-        {
-
-            // setup
-            let guess = 444;
-
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-
-            let coin = coin::mint_for_testing<SUI>(100, test_scenario::ctx(scenario_val));
-            
-            let (kiosk, kiosk_owner_cap) = test::get_kiosk(test_scenario::ctx(scenario_val));
-
-            let publisher = test::get_publisher(test_scenario::ctx(scenario_val));
-
-            
-            std::debug::print(&clock);
-            
-            
-
-            // prediction 
-            
-            make_prediction(guess, &clock, test_scenario::ctx(scenario_val));
-
-
-
-            // cleanup 
-
-            transfer::public_transfer(coin, admin);
-
-            test::return_publisher(publisher);
-
-            test::return_kiosk(kiosk, kiosk_owner_cap, test_scenario::ctx(scenario_val));
-           
-            clock::destroy_for_testing(clock);
-
-        };
-
-
-        
-
-        // ADMIN DELETES PREDICTION
-        test_scenario::next_tx(scenario_val, admin);
-        {
-             
-            let predict = test_scenario::take_from_sender<Prediction>(scenario_val);
-
-            delete_prediction(predict, test_scenario::ctx(scenario_val));
-
-
-        };
-
-
-
-
         // CREATE KIOSK AND TRANSFER POLICY 
         test_scenario::next_tx(scenario_val, admin);
         {
            
 
             // Create a Kiosk share it public and transfer the cap to owner
-            let (kiosk, cap) = kiosk::new(test_scenario::ctx(scenario_val));
+            let (admin_kiosk, admin_cap) = kiosk::new(test_scenario::ctx(scenario_val));
 
-            transfer::public_share_object(kiosk);
-            transfer::public_transfer(cap, admin);
+            transfer::public_share_object(admin_kiosk);
+            transfer::public_transfer(admin_cap, admin);
 
 
 
@@ -232,31 +303,38 @@ module predictrix::predictrix_tests {
 
             let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
             
+            clock::increment_for_testing( &mut clock, 8000);
+            std::debug::print(&clock);
+
+
+            let payment = coin::mint_for_testing<SUI>(100, test_scenario::ctx(scenario_val));
+
+            let game = test_scenario::take_shared<Game>(scenario_val);
+
                         
             
-            make_prediction(guess, &clock, test_scenario::ctx(scenario_val));
+            make_prediction(guess, payment, &mut game, &clock, test_scenario::ctx(scenario_val));
 
 
            
             clock::destroy_for_testing(clock);
+            test_scenario::return_shared(game);
 
         };
 
 
         
 
-        // ADMIN CREATE KIOSK AND LIST PREDICTION
+        // ADMIN GET THE KIOSK AND LIST PREDICTION
         test_scenario::next_tx(scenario_val, admin);
         {
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
             
+            clock::increment_for_testing( &mut clock, 10000);
+            std::debug::print(&clock);
             
             let admin_kiosk = test_scenario::take_shared<Kiosk>(scenario_val);
-            let cap = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val);
-            let policy = test_scenario::take_shared<TransferPolicy<Prediction>>(scenario_val);
-
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-            let guess = 444;
-
+            let admin_cap = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val);
 
            
             let predict = test_scenario::take_from_sender<Prediction>(scenario_val);
@@ -264,22 +342,43 @@ module predictrix::predictrix_tests {
             let prediction_id = object::id(&predict);
 
 
-            kiosk::place(&mut admin_kiosk, &cap, predict);
+            kiosk::place(&mut admin_kiosk, &admin_cap, predict);
             assert_eq(kiosk::has_item(&admin_kiosk, prediction_id), true);
 
 
             
-            kiosk::list<Prediction>(&mut admin_kiosk, &cap, prediction_id, 10);
+            kiosk::list<Prediction>(&mut admin_kiosk, &admin_cap, prediction_id, 10);
+            kiosk::delist<Prediction>(&mut admin_kiosk, &admin_cap, prediction_id);
+            let prediction = kiosk::take<Prediction>(&mut admin_kiosk, &admin_cap, prediction_id);
 
+            
 
-
-            clock::destroy_for_testing(clock); 
-
-            test_scenario::return_to_sender(scenario_val, cap);
+            test_scenario::return_to_sender(scenario_val, admin_cap);
             test_scenario::return_shared(admin_kiosk);
-            test_scenario::return_shared(policy);
+           
+            clock::destroy_for_testing(clock);
+
+            test_scenario::return_to_sender(scenario_val, prediction);
+
+        };
 
 
+        // CREATE USER KIOSK
+        test_scenario::next_tx(scenario_val, user1);
+        {
+
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
+            
+            clock::increment_for_testing( &mut clock, 14000);
+            std::debug::print(&clock);
+
+            let (user_kiosk, user_cap) = kiosk::new(test_scenario::ctx(scenario_val));
+
+            transfer::public_share_object(user_kiosk);
+            transfer::public_transfer(user_cap, user1);
+
+            
+            clock::destroy_for_testing(clock);
 
         };
 
@@ -289,6 +388,10 @@ module predictrix::predictrix_tests {
         // ADMIN CLOSE GAME
         test_scenario::next_tx(scenario_val, admin);
         {
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
+            
+            clock::increment_for_testing( &mut clock, 14000);
+            std::debug::print(&clock);
 
             let game = test_scenario::take_shared<Game>(scenario_val);
 
@@ -299,9 +402,34 @@ module predictrix::predictrix_tests {
             assert!(game_closed == true, 0);
 
             test_scenario::return_shared(game);
+            clock::destroy_for_testing(clock);
 
         };
 
+
+
+        // CLAIM WINNER
+        test_scenario::next_tx(scenario_val, admin);
+        {
+            
+            let prediction = test_scenario::take_from_sender<Prediction>(scenario_val);
+            let game = test_scenario::take_shared<Game>(scenario_val);
+            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
+           
+            clock::increment_for_testing( &mut clock, 16000);
+            std::debug::print(&clock);
+
+
+            claim_winner(prediction, &mut game, &clock, test_scenario::ctx(scenario_val));
+            
+
+            clock::destroy_for_testing(clock);
+            test_scenario::return_shared(game);
+
+            // test_scenario::return_to_sender<Prediction>(scenario_val, prediction);
+
+            
+        };
 
 
 
@@ -315,276 +443,7 @@ module predictrix::predictrix_tests {
 
 
 
-
-    public fun purchase_tests(){
-
-
-        let admin = @0x1;
-        let user1 = @0x2;
-       
-
-        
-        let scenario = init_test_helper();
-        let scenario_val = &mut scenario;
-
-
-
-
-        
-        // ADMIN AND USER CREATE KIOSKS AND TRANSFER POLICY AND AF+DMIN MAKES PREDICTION
-        test_scenario::next_tx(scenario_val, admin);
-        {
-
-            // ADMIN
-
-            // create admin kiosk and transfer policy
-            let (admin_kiosk_two, admin_cap_two) = kiosk::new(test_scenario::ctx(scenario_val));
-            transfer::public_share_object(admin_kiosk_two);
-            transfer::public_transfer(admin_cap_two, admin);
-
-            let admin_cap_two = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val); 
-            test_scenario::return_to_sender(scenario_val, admin_cap_two);
-
-
-            let admin_policy_two = test_scenario::take_shared<TransferPolicy<Prediction>>(scenario_val);
-            test_scenario::return_shared(admin_policy_two);
-            
-
-
-            // admin makes a prediction
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-            let guess = 444;
-
-            make_prediction(guess, &clock, test_scenario::ctx(scenario_val));
-
-
-
-            // USER1  
-            // Create a Kiosk share it public and transfer the cap to owner
-            let (user_kiosk_two, user_cap_two) = kiosk::new(test_scenario::ctx(scenario_val));
-            transfer::public_share_object(user_kiosk_two);
-            transfer::public_transfer(user_cap_two, user1);
-
-            let user_cap_two = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val); 
-            test_scenario::return_to_sender(scenario_val, user_cap_two);
-            
-
-
-            clock::destroy_for_testing(clock); 
-            
-
-
-        };
-
-
-        
-         // ADMIN LISTS PREDICTION IN KIOSK AND USER PURCHASES PREDICTION
-        test_scenario::next_tx(scenario_val, admin);
-        {
-
-            let admin_kiosk = test_scenario::take_shared<Kiosk>(scenario_val);
-            let admin_cap = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val);
-            let policy = test_scenario::take_shared<TransferPolicy<Prediction>>(scenario_val);
-
-
-            let predict = test_scenario::take_from_sender<Prediction>(scenario_val);
-            
-
-            let prediction_id = object::id(&predict);
-
-
-            kiosk::place(&mut admin_kiosk, &admin_cap, predict);
-            assert_eq(kiosk::has_item(&admin_kiosk, prediction_id), true);
-
-
-
-            kiosk::list<Prediction>(&mut admin_kiosk, &admin_cap, prediction_id, 10);
-            
-
-            let user_kiosk = test_scenario::take_shared<Kiosk>(scenario_val);
-            let user_cap = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val);
-
-            let coin = coin::mint_for_testing<SUI>(10, test_scenario::ctx(scenario_val));
-
-            let (purchased_prediction, request) = kiosk::purchase<Prediction>(&mut admin_kiosk, prediction_id, coin);
-
-            let purchased_prediction_id = object::id<Prediction>(&purchased_prediction);
-
-            kiosk::place(&mut user_kiosk, &user_cap, purchased_prediction);
-            assert_eq(kiosk::has_item(&user_kiosk, purchased_prediction_id), true);
-
-
-            kiosk::list<Prediction>(&mut user_kiosk, &user_cap, purchased_prediction_id, 100);
-           
-
-
-            transfer_policy::confirm_request(&policy, request);
-
-
-            
-            test_scenario::return_to_sender(scenario_val, admin_cap);
-            test_scenario::return_shared(admin_kiosk);
-            test_scenario::return_shared(policy);
-
-            test_scenario::return_to_sender(scenario_val, user_cap);
-            test_scenario::return_shared(user_kiosk);
-
-
-
-        };
-
-
-
-
-        test_scenario::end(scenario);  
-
-
-
-    }
-
-
-
-
-
-
-
-
-    public fun winner_tests(){
-
-
-        let admin = @0x1;
-        let user1 = @0x2;
-       
-
-        
-        let scenario = init_test_helper();
-        let scenario_val = &mut scenario;
-
-
-
-
-        // START GAME
-        test_scenario::next_tx(scenario_val, admin);
-        {
-            let start_game_cap = test_scenario::take_from_sender<StartGameCap>(scenario_val);
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val)); 
-            let price = 100;
-
-            let predict_epoch = set_predict_epoch(0, 5, test_scenario::ctx(scenario_val));
-            let report_epoch = set_report_epoch(0, 444, test_scenario::ctx(scenario_val));
-
-
-
-            start_game(start_game_cap, price, predict_epoch, report_epoch, &clock, test_scenario::ctx(scenario_val));
-
-
-            clock::destroy_for_testing(clock); 
-
-        };
-
-
-
-
-        // CREATE KIOSKS AND MAKE A PREDICTION
-        test_scenario::next_tx(scenario_val, admin);
-        {
-           // ADMIN
-
-            // create admin kiosk and transfer policy
-            let (admin_kiosk_two, admin_cap_two) = kiosk::new(test_scenario::ctx(scenario_val));
-            transfer::public_share_object(admin_kiosk_two);
-            transfer::public_transfer(admin_cap_two, admin);
-
-            let admin_cap_two = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val); 
-            test_scenario::return_to_sender(scenario_val, admin_cap_two);
-
-
-            let admin_policy_two = test_scenario::take_shared<TransferPolicy<Prediction>>(scenario_val);
-            test_scenario::return_shared(admin_policy_two);
-            
-
-
-            // admin makes a prediction
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-            let guess = 444;
-
-
-            make_prediction(guess, &clock, test_scenario::ctx(scenario_val));
-
-
-
-            // USER1  
-            // Create a Kiosk share it public and transfer the cap to owner
-            let (user_kiosk_two, user_cap_two) = kiosk::new(test_scenario::ctx(scenario_val));
-            transfer::public_share_object(user_kiosk_two);
-            transfer::public_transfer(user_cap_two, user1);
-
-            let user_cap_two = test_scenario::take_from_sender<KioskOwnerCap>(scenario_val); 
-            test_scenario::return_to_sender(scenario_val, user_cap_two);
-            
-
-
-            clock::destroy_for_testing(clock); 
-            
-
-        };
-
-
-
-
-        // CLOSE GAME
-        test_scenario::next_tx(scenario_val, admin);
-        {
-           
-        
-        
-            let game = test_scenario::take_shared<Game>(scenario_val);
-
-            let end_game_cap = test_scenario::take_from_sender<EndGameCap>(scenario_val);
-           
-            let game_closed = close_game(end_game_cap, &mut game, 444, test_scenario::ctx(scenario_val)); 
-
-            assert!(game_closed == true, 0);
-
-            test_scenario::return_shared(game);
-
-        };
-
-
-
-
-        // CLAIM WINNINER
-        test_scenario::next_tx(scenario_val, admin);
-        {
-            let prediction = test_scenario::take_from_sender<Prediction>(scenario_val);
-            let game_instance = test_scenario::take_shared<Game>(scenario_val);
-            let clock = clock::create_for_testing(test_scenario::ctx(scenario_val));
-           
-
-            claim_winner(prediction, &mut game_instance, &clock, test_scenario::ctx(scenario_val));
-            
-
-            clock::destroy_for_testing(clock);
-            test_scenario::return_shared(game_instance);
-
-
-
-        };
-
-
-
-
-        test_scenario::end(scenario);  
-
-
-
-        
-    }
-
-        
-
-    
-
+   
 }
 
 

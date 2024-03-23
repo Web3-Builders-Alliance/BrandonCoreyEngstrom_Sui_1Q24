@@ -4,9 +4,20 @@ import cn from 'classnames';
 
 import space from '/home/ub/SUI_PROJECTS/Predictrix_new/vite-project/src/assets/space.gif';
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "'Finger Paint', sans-serif",
+  },
+});
+
+
 
 const Roadmap = () => {
   return (
+    <ThemeProvider theme={theme}>
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
@@ -26,6 +37,7 @@ const Roadmap = () => {
       </Box>
 
     </Box>
+    </ThemeProvider>
   );
 };
 

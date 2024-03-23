@@ -4,8 +4,18 @@ import cn from 'classnames';
 
 import genie from '/home/ub/SUI_PROJECTS/Predictrix_new/vite-project/src/assets/giphy.gif';
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "'Finger Paint', sans-serif",
+  },
+});
+
 const Genie = () => {
   return (
+    <ThemeProvider theme={theme}> 
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
@@ -25,6 +35,7 @@ const Genie = () => {
         <img src={genie} alt="Map" style={{ maxWidth: '100%', height: 'auto' }} />
       </Box>
     </Box>
+    </ThemeProvider>
   );
 };
 
