@@ -21,10 +21,10 @@ const theme = createTheme({
 
 const textFieldStyle = {
   input: {
-    color: "white", // Ensuring text color is white for visibility
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif", // More readable font for input
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Slightly dark background for the input field
-    borderRadius: "4px", // Rounded corners for the input field
+    color: "white", 
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif", 
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    borderRadius: "4px", 
   },
   notchedOutline: {
     borderWidth: "1px",
@@ -126,7 +126,7 @@ const MakePrediction = () => {
             InputProps={{
               style: textFieldStyle.input,
             }}
-            // Apply custom styles to the notched outline
+            
             InputLabelProps={{
               style: { color: 'white' },
             }}

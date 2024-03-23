@@ -17,15 +17,15 @@ const theme = createTheme({
     fontFamily: "'Finger Paint', sans-serif",
   },
   components: {
-    // Customizing MUI Button component
+    
     MuiButton: {
       styleOverrides: {
-        // Apply custom styles for the root element of the Button
+        
         root: {
           '&.Mui-disabled': {
-            // Define styles for the disabled state
-            color: 'rgba(255, 255, 255, 0.7)', // Light white color for text
-            borderColor: 'rgba(255, 255, 255, 0.3)', // Light white color for border
+            
+            color: 'rgba(255, 255, 255, 0.7)', 
+            borderColor: 'rgba(255, 255, 255, 0.3)', 
           },
         },
       },
