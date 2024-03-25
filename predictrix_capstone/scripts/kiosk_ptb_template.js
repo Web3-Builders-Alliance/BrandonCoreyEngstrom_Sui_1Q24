@@ -19,7 +19,7 @@ console.log(`Public Key raw bytes: ${keypair.getPublicKey().toRawBytes()}`);
 console.log(`Public Key: ${keypair.getPublicKey().toSuiAddress()}`);
 
 
-const itemType = '0xd32b20876598c0d1c903a2834c857278435c8da704a6e2183c6e1c704eb72efe::kiosk_practice::Prediction';
+const itemType = '';
 
 
 // client

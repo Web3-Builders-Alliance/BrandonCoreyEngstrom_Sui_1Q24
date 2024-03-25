@@ -50,7 +50,7 @@ const client = new SuiClient({
         async function logGameBalance() {
             
              await txb.moveCall({
-                target: `${PACKAGE}::kiosk_practice::balance`,
+                target: `${PACKAGE}::predictrix::balance`,
                 arguments: [ txb.object(GAME_ID) ],
             });
            

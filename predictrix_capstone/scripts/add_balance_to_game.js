@@ -47,7 +47,7 @@ const client = new SuiClient({
 
 
         txb.moveCall({
-            target: `${PACKAGE}::kiosk_practice::add_game_balance`,
+            target: `${PACKAGE}::predictrix::add_game_balance`,
             arguments: [ txb.object(GAME_ID), txb.object(COIN_TO_ADD) ],
         });
 

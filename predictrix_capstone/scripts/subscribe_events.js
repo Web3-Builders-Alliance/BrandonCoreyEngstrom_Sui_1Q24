@@ -23,10 +23,10 @@ const keypairdev = Ed25519Keypair.fromSecretKey(privateKeyBytes);
 
 // contract events
 const eventsToSubscribe = [ 
-    `${PACKAGE}::kiosk_practice::TimeEvent`,
-    `${PACKAGE}::kiosk_practice::GameStarted`,
-    `${PACKAGE}::kiosk_practice::PredictionMade`,
-    `${PACKAGE}::kiosk_practice::GameOpen`,
+    `${PACKAGE}::predictrix::TimeEvent`,
+    `${PACKAGE}::predictrix::GameStarted`,
+    `${PACKAGE}::predictrix::PredictionMade`,
+    `${PACKAGE}::predictrix::GameOpen`,
     
 ];
 

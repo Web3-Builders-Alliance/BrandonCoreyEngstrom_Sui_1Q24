@@ -36,6 +36,8 @@ module predictrix::predictrix_tests {
     use predictrix::predictrix::delete_predict_epoch;
     use predictrix::predictrix::delete_report_epoch;
     use predictrix::predictrix::claim_winner;
+    use predictrix::predictrix::set_predict_epoch_return_val;
+    use predictrix::predictrix::set_report_epoch_return_val;
 
 
 
@@ -121,8 +123,8 @@ module predictrix::predictrix_tests {
 
             let price = 100;
 
-            let predict_epoch = set_predict_epoch(0, 12000, test_scenario::ctx(scenario_val));
-            let report_epoch = set_report_epoch(0, 12000, test_scenario::ctx(scenario_val));
+            let predict_epoch = set_predict_epoch_return_val(0, 12000, test_scenario::ctx(scenario_val));
+            let report_epoch = set_report_epoch_return_val(0, 12000, test_scenario::ctx(scenario_val));
 
 
             start_game(start_game_cap, price, predict_epoch, report_epoch, &clock, test_scenario::ctx(scenario_val));
@@ -254,8 +256,8 @@ module predictrix::predictrix_tests {
 
             let price = 100;
 
-            let predict_epoch = set_predict_epoch(0, 18000, test_scenario::ctx(scenario_val));
-            let report_epoch = set_report_epoch(0, 18000, test_scenario::ctx(scenario_val));
+            let predict_epoch = set_predict_epoch_return_val(0, 18000, test_scenario::ctx(scenario_val));
+            let report_epoch = set_report_epoch_return_val(0, 18000, test_scenario::ctx(scenario_val));
 
 
 

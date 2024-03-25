@@ -4,14 +4,15 @@
   padding: 2rem;
   text-align: center;
 }
+
 body {
  
-  color: rgb(var(--foreground-rgb));
+  /* color: rgb(var(--foreground-rgb));
   background-color: #000000; 
   background-image: url('https://i.imgur.com/m8KuaOS.gif'); 
   background-repeat: repeat; 
   background-size: auto; 
-  background-position: top left;
+  background-position: top left; */
 }
 
 
@@ -22,9 +23,10 @@ body {
 }
 
 
+/* Animation keyframes */
 @keyframes move {
   0% { transform: translateX(0); }
-  100% { transform: translateX(100%); } 
+  100% { transform: translateX(100%); } /* Example - move horizontally */
 }
 
 

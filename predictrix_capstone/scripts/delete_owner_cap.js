@@ -47,7 +47,7 @@ const client = new SuiClient({
         
 
         txb.moveCall({
-            target: `${PACKAGE}::kiosk_practice::delete_game_owner_cap`,
+            target: `${PACKAGE}::predictrix::delete_game_owner_cap`,
             arguments: [ txb.object(GAME_OWNER_CAP)],
         });
 

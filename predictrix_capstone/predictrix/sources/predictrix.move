@@ -360,7 +360,7 @@ module predictrix::predictrix {
 
 
 
-    public fun set_predict_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : PredictEpoch  {
+    public fun set_predict_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext)   {
         
         let predict_epoch  = PredictEpoch {
             id: object::new(ctx),
@@ -368,6 +368,20 @@ module predictrix::predictrix {
             end_time,
         };
 
+        transfer::transfer(predict_epoch, tx_context::sender(ctx));
+
+    }
+
+
+    public fun set_predict_epoch_return_val(start_time: u64, end_time: u64, ctx: &mut TxContext) : PredictEpoch   {
+        
+        let predict_epoch  = PredictEpoch {
+            id: object::new(ctx),
+            start_time,
+            end_time,
+        };
+
+        
         predict_epoch
 
     }
@@ -375,7 +389,20 @@ module predictrix::predictrix {
 
 
 
-    public fun set_report_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) : ReportEpoch {
+    public fun set_report_epoch(start_time: u64, end_time: u64, ctx: &mut TxContext) {
+        
+        let report_epoch  = ReportEpoch {
+            id: object::new(ctx),
+            start_time,
+            end_time,
+        };
+
+        transfer::transfer(report_epoch, tx_context::sender(ctx));
+
+    }
+    
+
+     public fun set_report_epoch_return_val(start_time: u64, end_time: u64, ctx: &mut TxContext) : ReportEpoch {
         
         let report_epoch  = ReportEpoch {
             id: object::new(ctx),
@@ -384,9 +411,7 @@ module predictrix::predictrix {
         };
 
         report_epoch
-
     }
-    
 
 
 
@@ -575,7 +600,6 @@ module predictrix::predictrix {
     }
 
 
-
     
     // ###################
     // WITHDRAW FUNCTIONS#
@@ -671,10 +695,50 @@ module predictrix::predictrix {
 
 
 
-    // done in ptb
-    // place, take, list, delist, purchase 
-    
+    public fun place_item<Prediction: key + store>(cap:&KioskOwnerCap, kiosk: &mut Kiosk, prediction: Prediction){
+        kiosk::place(kiosk, cap, prediction);
+    }
 
+
+
+
+    public fun list_item<Prediction: key + store>(cap: &KioskOwnerCap, kiosk: &mut Kiosk, prediction_id: ID, price: u64){
+        kiosk::list<Prediction>(kiosk, cap, prediction_id, price);
+    }
+
+
+
+    
+    public fun delist_item<Prediction: key + store>(cap: &KioskOwnerCap, kiosk: &mut Kiosk, prediction_id: ID){
+        kiosk::delist<Prediction>(kiosk, cap, prediction_id);
+    }
+
+
+
+    // review
+    public fun take_item<Prediction: key + store>(cap: &KioskOwnerCap, kiosk: &mut Kiosk, prediction_id: ID) : Prediction {
+        let prediction = kiosk::take<Prediction>(kiosk, cap, prediction_id);
+        prediction
+    }
+
+
+    
+    // review
+    public fun purchase_item<Prediction: key + store>( kiosk: &mut Kiosk, prediction_id: ID, coin: Coin<SUI>, ctx: &mut TxContext) : TransferRequest<Prediction> {
+        let (prediction, request) = kiosk::purchase<Prediction>(kiosk, prediction_id, coin);
+        transfer::public_transfer(prediction, tx_context::sender(ctx));
+        request
+    }
+
+
+
+    // review
+    public fun withdraw_from_kiosk<Prediction: key + store>(cap: &KioskOwnerCap, kiosk: &mut Kiosk, amount: Option<u64>, ctx: &mut TxContext)  {
+        
+        let amount_withrawn = kiosk::withdraw(kiosk, cap, amount, ctx); 
+        transfer::public_transfer(amount_withrawn, tx_context::sender(ctx));
+
+    }
 
 
 

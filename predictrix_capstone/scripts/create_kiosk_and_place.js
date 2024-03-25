@@ -28,7 +28,7 @@ const kioskClient = new KioskClient({
     network: Network.TESTNET,
 });
 
-
+// make it just a retrun kiosk and kiosk cap 
 
 (async () => {
     try {
@@ -46,11 +46,13 @@ const kioskClient = new KioskClient({
         kioskTx.create();
 
 
-        kioskTx
+        await kioskTx
         .place({
             itemType: `${ITEMTYPE}`,
             item: `${PREDICTION_TWO}`,
         });
+
+
 
 
         kioskTx.shareAndTransferCap(`${keypair.getPublicKey().toSuiAddress()}`);

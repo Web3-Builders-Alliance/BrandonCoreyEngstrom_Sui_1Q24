@@ -52,7 +52,7 @@ const client = new SuiClient({
         txb.setGasBudget(10000000);
 
         txb.moveCall({
-            target: `${PACKAGE}::kiosk_practice::withdraw_balance_from_game`,
+            target: `${PACKAGE}::predictrix::withdraw_balance_from_game`,
             arguments: [txb.object(GAME_OWNER_CAP), txb.object(GAME_ID), txb.pure.u64(400000000)],
         });
 

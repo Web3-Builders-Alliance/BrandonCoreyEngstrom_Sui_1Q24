@@ -28,7 +28,7 @@ const Roadmap = () => {
       borderRadius: '4px', 
       m: 1, 
       width: '100%',  }}>
-      <Typography className={cn("px-2 py-2 m-2 pixelify_sans")} variant="h4" gutterBottom component="div" sx={{ fontWeight: 'bold', pb: 2, color: 'blue', }}>
+      <Typography className={cn("px-2 py-2 m-2 pixelify_sans")} variant="h4" gutterBottom component="div" sx={{ fontWeight: 'bold', pb: 2, color: 'white', }}>
         Roadmap
       </Typography>
       

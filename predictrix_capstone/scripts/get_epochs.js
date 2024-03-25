@@ -5,7 +5,7 @@ import walletDev from './dev-wallet.json' assert { type: 'json' };
 
 import { WebSocket } from 'ws';
 
-import {  PACKAGE, PREDICT_EPOCH, REPORT_EPOCH,  START_GAME_CAP, GAME_PRICE, CLOCK  } from './config.js';
+import {  PACKAGE, PREDICT_START_TIME, PREDICT_END_TIME, REPORT_START_TIME, REPORT_END_TIME  } from './config.js';
 
 // generate a keypair
 const privateKeyArray = walletDev.privateKey.split(',').map(num => parseInt(num, 10));
@@ -32,10 +32,20 @@ const client = new SuiClient({
         const txb = new TransactionBlock();
 
 
+        txb.setGasBudget(10000000);
+
+
+
 
         txb.moveCall({
-            target: `${PACKAGE}::predictrix::start_game`,
-            arguments: [ txb.object(START_GAME_CAP), txb.pure.u64(GAME_PRICE), txb.object(PREDICT_EPOCH), txb.object(REPORT_EPOCH), txb.object(CLOCK)],
+            target: `${PACKAGE}::predictrix::set_predict_epoch`,
+            arguments: [ txb.pure.u64(PREDICT_START_TIME), txb.pure.u64(PREDICT_END_TIME) ],
+        });
+
+
+        txb.moveCall({
+            target: `${PACKAGE}::predictrix::set_report_epoch`,
+            arguments: [ txb.pure.u64(REPORT_START_TIME), txb.pure.u64(REPORT_END_TIME) ],
         });
 
 

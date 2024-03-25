@@ -1,23 +1,19 @@
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import cn from 'classnames'; 
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { GAME_STATUS } from '../../scripts/config.ts';
-
-
-import { PACKAGE } from '../../scripts/config.ts';
 
 
 const theme = createTheme({
-    typography: {
-      fontFamily: "'Finger Paint', sans-serif",
-    },
-  });
+  typography: {
+    fontFamily: "'Finger Paint', sans-serif",
+  },
+});
 
 
-const GameStatus = () => {
+const AboutKiosk = () => {
   return (
-
     <ThemeProvider theme={theme}> 
     <Box sx={{
        display: 'flex', 
@@ -30,18 +26,14 @@ const GameStatus = () => {
        m: 1, 
        width: '100%', 
        
-       }}>
-
-      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', fontSize: '1.875rem', fontWeight: 'bold' }}>
-        Game: {GAME_STATUS}
-      </Typography>
-      
-      <Typography className={cn("px-2 py-2 m-2 ")}  variant="h4" gutterBottom component="div" sx={{ color: 'red', fontSize: '1.875rem' }} >
-        Contract: {PACKAGE}
+        }}>
+      <Typography className={cn("px-2 py-2 m-2 pixelify_sans")}  variant="h4" gutterBottom component="div" sx={{ color: 'blue', }}>
+        About Kiosk and Predictrix
       </Typography>
       
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-        Game Started: 0000-00-00 00:00:00 - GMT
+        Predictrix is a decentralized application that leverages the power of SUI and uses the SUI kiosk to manage predictions made on this site. You can connect your wallet to manage your prediction using the KIOSK here.
+        Any information required can be found by using a blockchain explorer to search for your wallet and then the needed id numbers.
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
@@ -49,7 +41,7 @@ const GameStatus = () => {
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-       Game Ends: November 3, 2024, at 12:00 AM - GMT
+        To create a new Kiosk and Place the Prediction in the kiosk see below.      
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
@@ -57,7 +49,7 @@ const GameStatus = () => {
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-       Start Time To Claim Winner: November 10, 2024 at 12:00 AM - GMT
+        To Take your Prediction from the Kiosk see below.      
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
@@ -65,15 +57,7 @@ const GameStatus = () => {
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-       End Time To Claim Winner: February 2, 2024, at 12:00 AM - GMT
-      </Typography>
-
-      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-      ----------------------------------------------------------------------
-      </Typography>
-
-      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-        Predictrix will pull the final results using a switchboard oracle from aggregated results from .gov official sources after an offical count has been etablished. Predictrix is a neutral platform and will only use the officially established result and has a long report end time in the case of a prolonged or longer than anticipated result to be established.
+        To List a Prediction in the Kiosk see below.
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
@@ -81,19 +65,34 @@ const GameStatus = () => {
       </Typography>
 
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
-       TO CLAIM WINNINGS: After connecting your wallet, please enter your prediction ID and click the claim winnings button found below. 
-       The prediction ID can be found by looking at the prediction you placed that is found in your SUI wallet or kiosk.
+        To Delist a Prediction from the Kiosk see below.      
       </Typography>
+
+      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
+        ***
+      </Typography>
+
+      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
+        To Purchase a Prediction from the Kiosk see below.      
+      </Typography>
+
+      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
+        ***
+      </Typography>
+
+      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
+        To Withdraw funds from your Kiosk see below.      
+      </Typography>
+
+      
+
+
+
+
 
     </Box>
-
     </ThemeProvider>
-
-
   );
 };
 
-
-
-
-export default GameStatus;
+export default AboutKiosk;

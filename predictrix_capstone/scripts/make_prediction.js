@@ -51,7 +51,7 @@ const client = new SuiClient({
 
     
         txb.moveCall({
-            target: `${PACKAGE}::kiosk_practice::make_prediction`,
+            target: `${PACKAGE}::predictrix::make_prediction`,
             arguments: [  txb.pure.u64(GUESS), txb.object(coin), txb.object(GAME_ID), txb.object(CLOCK) ],
         });
 

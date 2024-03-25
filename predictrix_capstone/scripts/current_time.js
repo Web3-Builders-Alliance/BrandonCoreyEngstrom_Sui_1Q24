@@ -46,7 +46,7 @@ const client = new SuiClient({
 
         async function logCurrentTime() {
             await txb.moveCall({
-                target: `${PACKAGE}::kiosk_practice::get_time`,
+                target: `${PACKAGE}::predictrix::get_time`,
                 arguments: [txb.object(CLOCK)],
             });
            

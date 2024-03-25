@@ -45,7 +45,7 @@ const client = new SuiClient({
 
 
         txb.moveCall({
-            target: `${PACKAGE}::kiosk_practice::close_game`,
+            target: `${PACKAGE}::predictrix::close_game`,
             arguments: [ txb.object(END_GAME_CAP), txb.object(GAME_ID), txb.pure.u64(GAME_RESULT)],
         });
 
