@@ -60,11 +60,11 @@ function SecondPage() {
                 )}
 
 
-                {/* {connected && (
+                {connected && (
                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                     <TakeFromKiosk /> 
                     </Grid>
-                )} */}
+                )}
 
 
                 

@@ -75,11 +75,11 @@ const CreateKiosk = () => {
 
 
     // Sign and execute transaction block.
-    await signAndExecuteTransactionBlock({ transactionBlock: txb });
+    const predictionData = await signAndExecuteTransactionBlock({ transactionBlock: txb });
 
-   
+    alert(`Congrats! KioskCreated! \n Digest: ${predictionData.digest}`);
 
-
+    console.log(`Congrats! KioskCreated! \n Digest: ${predictionData.digest}`);
     
 
 

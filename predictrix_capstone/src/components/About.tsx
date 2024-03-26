@@ -33,6 +33,10 @@ const About = () => {
       <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
         Predictrix is a decentralized application that allows users to predict the outcome of the 2024 US Presidential Election using SUI. Predictrix is currently in a test phase and is for educational purposes only. No actual monetary value is exchanged. 
       </Typography>
+      <Typography className={cn("px-2 py-2 m-2")}  variant="body1" gutterBottom component="div" sx={{ color: 'white', }}>
+        CURRENTLY PREDICTRIX IS DESKTOP VERSION ONLY.
+      </Typography>
+      
     </Box>
     </ThemeProvider>
   );

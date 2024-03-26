@@ -428,8 +428,6 @@ module predictrix::predictrix_tests {
             clock::destroy_for_testing(clock);
             test_scenario::return_shared(game);
 
-            // test_scenario::return_to_sender<Prediction>(scenario_val, prediction);
-
             
         };
 

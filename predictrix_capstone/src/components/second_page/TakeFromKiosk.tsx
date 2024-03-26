@@ -55,8 +55,8 @@ const TakeFromKiosk = () => {
         let prediction = txb.moveCall({
             target: `${PACKAGE}::predictrix::take_item`,
             arguments: [
-                txb.object(kioskId),
                 txb.object(kioskOwnerCapId),
+                txb.object(kioskId),
                 txb.object(userPredictionId),
             ],
             typeArguments: [`${PACKAGE}::predictrix::Prediction`]
@@ -113,11 +113,11 @@ const TakeFromKiosk = () => {
           Take Prediction from Your Kiosk
         </Typography>
         <TextField
-            label="Kiosk ID"
-            placeholder="Enter your Kiosk ID" 
+            label="Kiosk Owner Cap ID"
+            placeholder="Enter your Kiosk Owner Cap ID" 
             variant="outlined"
-            value={kioskId}
-            onChange={(e) => setkioskID(e.target.value)}
+            value={kioskOwnerCapId}
+            onChange={(e) => setOwnerCapId(e.target.value)}
             sx={{
               mb: 2,
               width: '100%',
@@ -139,11 +139,11 @@ const TakeFromKiosk = () => {
           />
 
          <TextField
-          label="Kiosk Owner Cap ID"
-          placeholder="Enter your Kiosk Owner Cap ID" 
+          label="Kiosk  ID"
+          placeholder="Enter your Kiosk ID" 
           variant="outlined"
-          value={kioskOwnerCapId}
-          onChange={(e) => setOwnerCapId(e.target.value)}
+          value={kioskId}
+          onChange={(e) => setkioskID(e.target.value)}
           sx={{
             mb: 2,
             width: '100%',

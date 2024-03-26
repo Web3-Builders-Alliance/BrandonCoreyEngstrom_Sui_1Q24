@@ -1,7 +1,7 @@
 import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
 import wallet from './dev-wallet.json' assert { type: 'json' };
 
-import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
+// import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
 
 
 // ###############################################
@@ -20,7 +20,7 @@ import { decodeSuiPrivateKey } from '@mysten/sui.js/cryptography';
 
 
 // generate a keypair from mnemonic
-const exampleMnemonic = '';
+const exampleMnemonic = 'rifle blouse fiber brush enrich twelve message squirrel bless daring van enjoy';
  
 const keyPair_one = Ed25519Keypair.deriveKeypair(exampleMnemonic);
 

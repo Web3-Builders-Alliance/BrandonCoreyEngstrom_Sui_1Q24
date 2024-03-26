@@ -42,6 +42,7 @@ const client = new SuiClient({
         const txb = new TransactionBlock();
 
 
+        txb.setGasBudget(10000000);
 
 
         async function logCurrentTime() {

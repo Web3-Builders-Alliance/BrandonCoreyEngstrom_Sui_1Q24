@@ -69,7 +69,7 @@ const WithdrawFromKiosk = () => {
         const predictionData = await signAndExecuteTransactionBlock({ transactionBlock: txb });
 
         console.log('Withdraw', predictionData);
-        alert(`Congrats! Withdrawal Successful! \n Digest: ${predictionData.digest}`)
+        alert(`Congrats! Withdrawal Successful! \n Digest: ${predictionData.digest}`);
         
         
       } catch (error) {
